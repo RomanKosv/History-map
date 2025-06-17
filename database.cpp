@@ -44,14 +44,9 @@ void Database::update()
     QTextStream in(&f);
     while (!in.atEnd()) {
         QString line = in.readLine();
-        QStringList colls = line.split('\t');
-        qWarning() << "Colls: " << colls;
+        qWarning() << "Line: " << line;
         _towns.append(
-            new Town{
-                QVector2D{colls[0].toFloat(), colls[1].toFloat()},
-                QDate::fromString(colls[2], Qt::ISODate),               //date must be yyyy-MM-dd
-                colls[3] == "_" ? QDate() : QDate::fromString(colls[3], Qt::ISODate)       //date must be yyyy-MM-dd or _
-            }
+            Town::fromTSV(line)
             );
     }
     emit townsChanged(_towns);
