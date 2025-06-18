@@ -22,6 +22,7 @@ public:
     QDate start() const;
     QDate end() const;
     QString name() const;
+    Q_INVOKABLE bool alive(QDate);
     // Town(const Town&);
     static Town* fromTSV(QString tsv_line, QObject* parent = nullptr);
 signals:

@@ -36,10 +36,20 @@ QString Town::name() const
     return _name;
 }
 
+bool Town::alive(QDate date)
+{
+    return ((!start().isValid()) || (start() <= date)) && ((!end().isValid()) || (date <= end()));
+}
+
 Town* Town::fromTSV(QString tsv_line, QObject *parent)
 {
     QStringList colls = tsv_line.split('\t');
-    return new Town(colls[0], QVector2D{colls[1].toFloat(), colls[2].toFloat()}, QDate::fromString(colls[3], Qt::ISODate), QDate::fromString(colls[4], Qt::ISODate));
+    return new Town(
+        colls[0],
+        QVector2D{colls[1].toFloat(), colls[2].toFloat()},
+        (colls[3] == "—" ? QDate() : QDate(colls[3].toInt(), 1, 1)),
+        (colls[4] == "—" ? QDate() : QDate(colls[4].toInt(), 1, 1))
+        );
 }
 
 // Town::Town(const Town &other)

@@ -21,9 +21,46 @@ Window {
         }
     }
 
-    ScrollView{
+    Item{
+        id: timeScale
+        height: 25
+        anchors{
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        Slider{
+            id: slider
+            anchors{
+                left: parent.left
+                right: dateText.left
+                top: parent.top
+                bottom: parent.bottom
+            }
+            from: 0
+            to: 1
+        }
+        Text{
+            id: dateText
+            width: 70
+            anchors{
+                right: parent.right
+                top: parent.top
+                bottom: parent.bottom
+            }
+            text: Qt.formatDate(map.current, "dd.MM.yyyy")
+        }
+    }
+
+    Item{
         id: mapSlot
-        anchors.fill: parent
+        anchors{
+            top: parent.top
+            right: parent.right
+            left: parent.left
+            bottom: timeScale.top
+        }
+        clip: true
 
         property double focusX: map.width / 2
         property double focusY: map.height / 2
@@ -61,10 +98,16 @@ Window {
                      }
         }
 
-        Item{
+        Image{
             id: map
-            property date current:"1025-01-01"
-            anchors.fill: parent
+            // property vector2d point1: Qt.vector2d(62, 51)
+            // property vector2d point2: Qt.vector2d(56, 60)
+            property vector2d point1: Qt.vector2d(61.668797, 50.836497)
+            property vector2d point2: Qt.vector2d(56.093886, 59.943267)
+            property date firstDate: "1300-01-01"
+            property date lastDate: "2025-01-01"
+            property date current: new Date(slider.value*lastDate.getTime() + (1 - slider.value)* firstDate.getTime())
+            source: "qrc:/qt/qml/HistoryMap/map1.png"
 
             transform: [
                 Translate{
@@ -89,21 +132,29 @@ Window {
 
                 delegate:Item{
                     id: town
+                    visible: database.towns[index].alive(map.current)
                     required property string name
                     required property date start
                     required property date end
                     required property vector2d point
+                    required property int index
+                    y: (point.x - map.point1.x) * map.height / (map.point2.x - map.point1.x)
+                    x: (point.y - map.point1.y) * map.width / (map.point2.y - map.point1.y)
+                    onVisibleChanged: {
+                        console.log(visible, x, y, name)
+                        console.log("image:", map.width, map.height)
+                    }
+
                     Rectangle{
                         id: townPoint
-                        width: 20
+                        width: 10
                         height: width
                         radius: width/2
                         color: "red"
-                        visible: start<=map.current && map.current<end
-                        x: point.x
-                        y: point.y
+                        x: -width/2
+                        y: -width/2 + 10
                         Component.onCompleted: {
-                            console.log("Rect: ", x, y, visible)
+                            console.log("Rect: ", point.x, point.y)
                         }
                     }
                     Text{

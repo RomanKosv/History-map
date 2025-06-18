@@ -20,6 +20,9 @@ qt_add_qml_module(appHistoryMap
         SOURCES database.h database.cpp
         SOURCES town.h town.cpp
         RESOURCES database.tsv
+        RESOURCES map.png
+        RESOURCES map1.png
+        RESOURCES map2.png
 )
 
 qt_add_resources(
